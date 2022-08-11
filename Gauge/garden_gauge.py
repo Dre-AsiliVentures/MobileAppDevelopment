@@ -54,14 +54,14 @@ class Gauge(Widget):
     def __init__(self, **kwargs):
         super(Gauge, self).__init__(**kwargs)
 
-        self._gauge = Scatter(
+        self._temp_Gauge = Scatter(
             size=(self.size_gauge, self.size_gauge),
             do_rotation=False,
             do_scale=False,
             do_translation=False
         )
 
-        _img_gauge = Image(
+        _imageGauge = Image(
             source=self.file_gauge,
             size=(self.size_gauge, self.size_gauge)
         )
@@ -81,10 +81,10 @@ class Gauge(Widget):
         self._glab = Label(font_size=self.size_text, markup=True)
         self._progress = ProgressBar(max=100, height=20, value=self.value)
 
-        self._gauge.add_widget(_img_gauge)
+        self._temp_Gauge.add_widget(_imageGauge)
         self._needle.add_widget(_img_needle)
 
-        self.add_widget(self._gauge)
+        self.add_widget(self._temp_Gauge)
         self.add_widget(self._needle)
         self.add_widget(self._glab)
         self.add_widget(self._progress)
@@ -98,13 +98,13 @@ class Gauge(Widget):
         Update gauge and needle positions after sizing or positioning.
 
         '''
-        self._gauge.pos = self.pos
+        self._temp_Gauge.pos = self.pos
         self._needle.pos = (self.x, self.y)
-        self._needle.center = self._gauge.center
-        self._glab.center_x = self._gauge.center_x
-        self._glab.center_y = self._gauge.center_y + (self.size_gauge / 4)
-        self._progress.x = self._gauge.x
-        self._progress.y = self._gauge.y + (self.size_gauge / 4)
+        self._needle.center = self._temp_Gauge.center
+        self._glab.center_x = self._temp_Gauge.center_x
+        self._glab.center_y = self._temp_Gauge.center_y + (self.size_gauge / 4)
+        self._progress.x = self._temp_Gauge.x
+        self._progress.y = self._temp_Gauge.y + (self.size_gauge / 4)
         self._progress.width = self.size_gauge
 
     def _turn(self, *args):
@@ -112,8 +112,8 @@ class Gauge(Widget):
         Turn needle, 1 degree = 1 unit, 0 degree point start on 50 value.
 
         '''
-        self._needle.center_x = self._gauge.center_x
-        self._needle.center_y = self._gauge.center_y
+        self._needle.center_x = self._temp_Gauge.center_x
+        self._needle.center_y = self._temp_Gauge.center_y
         self._needle.rotation = (50 * self.unit) - (self.value * self.unit)
         self._glab.text = "[b]{0:.0f}[/b]".format(self.value)
         self._progress.value = self.value
@@ -136,6 +136,8 @@ if __name__ == '__main__':
             stepper.bind(
                 value=lambda instance, value: setattr(self, 'step', value)
             )
+            #stepper.bind(value=20)
+
 
             box.add_widget(self.gauge)
             box.add_widget(stepper)
